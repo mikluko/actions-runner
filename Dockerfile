@@ -1,22 +1,20 @@
-FROM ubuntu:18.04
+FROM debian:buster-slim
 
 ARG RUNNER_VERSION=2.169.1
-ARG DOCKER_VERSION=19.03.8
 
-RUN apt update \
-  && apt install sudo curl ca-certificates -y --no-install-recommends \
-  && curl -L -o docker.tgz https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz \
-  && tar zxvf docker.tgz \
-  && install -o root -g root -m 755 docker/docker /usr/local/bin/docker \
-  && rm -rf docker docker.tgz \
-  && curl -L -o /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64 \
-  && chmod +x /usr/local/bin/dumb-init \
+RUN apt-get update \
+  && apt-get install dumb-init sudo curl git ca-certificates gnupg software-properties-common -y --no-install-recommends \
+  && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian buster stable" \
+  && curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add - \
+  && apt-get update \
+  && apt-get install -y docker-ce-cli \
+  && rm -rf /var/lib/apt/lists/* \
   && adduser --disabled-password --gecos "" --uid 1000 runner \
   && usermod -aG sudo runner \
   && echo "%sudo   ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers
 
-RUN mkdir -p /runner \
-  && cd /runner \
+RUN mkdir -p /opt/runner \
+  && cd /opt/runner \
   && curl -L -o runner.tar.gz https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz \
   && tar xzf ./runner.tar.gz \
   && rm runner.tar.gz \
@@ -25,5 +23,5 @@ RUN mkdir -p /runner \
 COPY entrypoint.sh /runner
 
 USER runner:runner
-ENTRYPOINT ["/usr/local/bin/dumb-init", "--"]
-CMD ["/runner/entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+CMD ["/opt/runner/entrypoint.sh"]
