@@ -20,8 +20,8 @@ RUN mkdir -p /opt/runner \
   && rm runner.tar.gz \
   && ./bin/installdependencies.sh
 
-COPY entrypoint.sh /runner
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
 USER runner:runner
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-CMD ["/opt/runner/entrypoint.sh"]
+CMD ["/usr/local/bin/entrypoint.sh"]
