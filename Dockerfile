@@ -3,7 +3,7 @@ FROM debian:buster-slim
 ARG RUNNER_VERSION=2.169.1
 
 RUN apt-get update \
-  && apt-get install dumb-init sudo curl git openssh ca-certificates gnupg software-properties-common -y --no-install-recommends \
+  && apt-get install dumb-init sudo curl git openssh-client ca-certificates gnupg software-properties-common -y --no-install-recommends \
   && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian buster stable" \
   && curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add - \
   && apt-get update \
