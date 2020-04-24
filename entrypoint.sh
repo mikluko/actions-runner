@@ -16,21 +16,20 @@ if [ -z "${RUNNER_TOKEN}" ]; then
   exit 1
 fi
 
-if [ -n "${RUNNER_SSH_KNOWN_HOSTS}" ]; then
+if [ -n "${RUNNER_SSH_KNOWN_HOSTS:-}" ]; then
   echo "${RUNNER_SSH_KNOWN_HOSTS}" > "$HOME/.ssh/known_hosts"
   chmod 0600 "$HOME/.ssh/known_hosts"
 fi
 
-if [ -n "${RUNNER_SSH_ID_RSA}" ]; then
+if [ -n "${RUNNER_SSH_ID_RSA:-}" ]; then
   echo "${RUNNER_SSH_ID_RSA}" > "$HOME/.ssh/id_rsa"
   chmod 0600 "$HOME/.ssh/id_rsa"
 fi
 
-if [ -n "${RUNNER_SSH_ID_RSA_PUB}" ]; then
+if [ -n "${RUNNER_SSH_ID_RSA_PUB:-}" ]; then
   echo "${RUNNER_SSH_ID_RSA_PUB}" > "$HOME/.ssh/id_rsa.pub"
   chmod 0600 "$HOME/.ssh/id_rsa.pub"
 fi
-
 
 cd "$HOME"
 ./config.sh --unattended --replace --name "${RUNNER_NAME}" --url "https://github.com/${RUNNER_REPO}" --token "${RUNNER_TOKEN}"
