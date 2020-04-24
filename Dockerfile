@@ -21,14 +21,16 @@ RUN mkdir -p /opt/runner \
   && ./bin/installdependencies.sh \
   && rm -rf /var/lib/apt/lists/*
 
-COPY known_hosts /opt/runner/.ssh/known_hosts
+WORKDIR /opt/runner
 
-RUN chown -R 1000:1000 /opt/runner/.ssh \
- && chmod 0700 /opt/runner/.ssh \
- && chmod 0600 /opt/runner/.ssh/known_hosts
+COPY known_hosts .ssh/known_hosts
 
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chown -R 1000:1000 .ssh \
+ && chmod 0700 .ssh \
+ && chmod 0600 .ssh/known_hosts
+
+COPY wrapper.sh ./
 
 USER runner:runner
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-CMD ["/usr/local/bin/entrypoint.sh"]
+CMD ["/opt/runner/wrapper.sh"]
