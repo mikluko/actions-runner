@@ -11,6 +11,11 @@ if [ -z "${RUNNER_REPO}" ]; then
   exit 1
 fi
 
+if [ -n "${RUNNER_TOKEN_PATH:-}" ]; then
+  RUNNER_TOKEN=$(cat "${RUNNER_TOKEN_PATH}")
+  export RUNNER_TOKEN
+fi
+
 if [ -z "${RUNNER_TOKEN}" ]; then
   echo "RUNNER_TOKEN must be set" 1>&2
   exit 1
