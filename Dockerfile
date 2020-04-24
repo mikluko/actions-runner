@@ -18,7 +18,8 @@ RUN mkdir -p /opt/runner \
   && curl -L -o runner.tar.gz https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz \
   && tar xzf ./runner.tar.gz \
   && rm runner.tar.gz \
-  && ./bin/installdependencies.sh
+  && ./bin/installdependencies.sh \
+  && rm -rf /var/lib/apt/lists/*
 
 COPY known_hosts /opt/runner/.ssh/known_hosts
 
