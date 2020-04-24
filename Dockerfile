@@ -9,7 +9,7 @@ RUN apt-get update \
   && apt-get update \
   && apt-get install -y docker-ce-cli \
   && rm -rf /var/lib/apt/lists/* \
-  && adduser --disabled-password --gecos "" --uid 1000 runner \
+  && adduser --disabled-password --gecos "" --home /opt/runner --uid 1000 runner \
   && usermod -aG sudo runner \
   && echo "%sudo   ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers
 
