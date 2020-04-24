@@ -20,6 +20,11 @@ RUN mkdir -p /opt/runner \
   && rm runner.tar.gz \
   && ./bin/installdependencies.sh
 
+COPY known_hosts /opt/runner/.ssh/known_hosts
+
+RUN chmod 0700 /opt/runner/.ssh
+ && chmod 0600 /opt/runner/.ssh/known_hosts
+
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
 USER runner:runner
