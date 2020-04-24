@@ -23,7 +23,7 @@ RUN mkdir -p /opt/runner \
 
 COPY known_hosts /opt/runner/.ssh/known_hosts
 
-RUN chmod 0700 /opt/runner/.ssh
+RUN chmod 0700 /opt/runner/.ssh \
  && chmod 0600 /opt/runner/.ssh/known_hosts
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
