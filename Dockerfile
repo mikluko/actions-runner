@@ -30,7 +30,7 @@ RUN mkdir -p /opt/runner \
 
 WORKDIR /opt/runner
 
-COPY known_hosts .ssh/known_hosts
+RUN mkdir .ssh && ssh-keyscan github.com > .ssh/known_hosts
 
 RUN chown -R 1000:1000 .ssh \
  && chmod 0700 .ssh \
