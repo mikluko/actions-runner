@@ -22,17 +22,17 @@ func main() {
 	defer cancel()
 
 	var args struct {
-		Name           string `envconfig:"RUNNER_NAME"`
-		Home           string `envconfig:"RUNNER_HOME" default:"/opt/runner"`
-		Owner          string `envconfig:"RUNNER_OWNER"`
-		Repo           string `envconfig:"RUNNER_REPO"`
-		Org            string `envconfig:"RUNNER_ORG"`
-		AccessToken    string `envconfig:"RUNNER_ACCESS_TOKEN"`
-		ApplicationID  int64  `envconfig:"RUNNER_APPLICATION_ID"`
-		InstallationID int64  `envconfig:"RUNNER_INSTALLATION_ID"`
-		PrivateKey     string `envconfig:"RUNNER_PRIVATE_KEY"`
-		PrivateKeyPath string `envconfig:"RUNNER_PRIVATE_KEY_PATH"`
-		privateKey     []byte
+		Name              string `envconfig:"RUNNER_NAME"`
+		Home              string `envconfig:"RUNNER_HOME" default:"/opt/runner"`
+		Owner             string `envconfig:"RUNNER_OWNER"`
+		Repo              string `envconfig:"RUNNER_REPO"`
+		Org               string `envconfig:"RUNNER_ORG"`
+		AccessToken       string `envconfig:"RUNNER_ACCESS_TOKEN"`
+		AppID             int64  `envconfig:"RUNNER_APP_ID"`
+		AppInstallationID int64  `envconfig:"RUNNER_APP_INSTALLATION_ID"`
+		AppPrivateKey     string `envconfig:"RUNNER_APP_PRIVATE_KEY"`
+		AppPrivateKeyPath string `envconfig:"RUNNER_APP_PRIVATE_KEY_PATH"`
+		privateKey        []byte
 	}
 
 	err := envconfig.Process("", &args)
@@ -51,18 +51,18 @@ func main() {
 	}
 
 	switch {
-	case args.PrivateKey != "":
-		args.privateKey = []byte(args.PrivateKey)
-	case args.PrivateKeyPath != "":
-		args.privateKey, err = ioutil.ReadFile(args.PrivateKeyPath)
+	case args.AppPrivateKey != "":
+		args.privateKey = []byte(args.AppPrivateKey)
+	case args.AppPrivateKeyPath != "":
+		args.privateKey, err = ioutil.ReadFile(args.AppPrivateKeyPath)
 		if err != nil {
 			log.Fatal(errors.Wrap(err, "failed to read private key from file"))
 		}
 	}
 
 	switch {
-	case args.ApplicationID != 0 && args.InstallationID != 0 && args.privateKey != nil:
-		c, err = clientInstallation(ctx, args.ApplicationID, args.InstallationID, args.privateKey)
+	case args.AppID != 0 && args.AppInstallationID != 0 && args.privateKey != nil:
+		c, err = clientInstallation(ctx, args.AppID, args.AppInstallationID, args.privateKey)
 	case args.AccessToken != "":
 		c, err = clientAccessToken(ctx, args.AccessToken)
 	default:
