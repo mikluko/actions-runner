@@ -1,3 +1,10 @@
+FROM golang:1.14 AS build
+
+ADD . /go/actions-runner
+WORKDIR /go/actions-runner
+RUN go mod download
+RUN go build
+
 FROM debian:buster-slim
 
 ARG RUNNER_VERSION=2.169.1
@@ -29,8 +36,10 @@ RUN chown -R 1000:1000 .ssh \
  && chmod 0700 .ssh \
  && chmod 0600 .ssh/known_hosts
 
-COPY wrapper.sh ./
+COPY --from=build /go/actions-runner/actions-runner ./
+
+ENV RUNNER_HOME=/opt/runner
 
 USER runner:runner
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-CMD ["/opt/runner/wrapper.sh"]
+CMD ["/opt/runner/actions-runner"]
