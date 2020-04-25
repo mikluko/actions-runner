@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"reflect"
 
 	"github.com/bradleyfalzon/ghinstallation"
 	"github.com/google/go-github/v31/github"
@@ -35,10 +36,12 @@ func main() {
 		privateKey        []byte
 	}
 
+
 	err := envconfig.Process("", &args)
 	if err != nil {
 		log.Fatal(err)
 	}
+	unsetEnvironment(&args)
 
 	var (
 		c   *github.Client
@@ -172,4 +175,24 @@ func execRun(ctx context.Context, home string) error {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
+}
+
+func unsetEnvironment(x interface{}) {
+	v := reflect.ValueOf(x)
+	if v.Kind() != reflect.Ptr {
+		panic("should be ptr")
+	}
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		panic("should be struct")
+	}
+	t := v.Type()
+	for i := 0; i < t.NumField(); i++ {
+		f := t.Field(i)
+		name, ok := f.Tag.Lookup("envconfig")
+		if !ok {
+			continue
+		}
+		_ = os.Unsetenv(name)
+	}
 }
