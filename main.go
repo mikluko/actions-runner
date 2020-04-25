@@ -89,7 +89,12 @@ func main() {
 		log.Fatal(errors.Wrap(err, "failed to create registration token"))
 	}
 
-	err = execConfig(ctx, args.Home, args.Name, url, t.GetToken())
+	err = execUnregister(ctx, args.Home, args.Name, url, t.GetToken())
+	if err != nil {
+		log.Fatal(errors.Wrap(err, "failed to unregister runner"))
+	}
+
+	err = execRegister(ctx, args.Home, args.Name, url, t.GetToken())
 	if err != nil {
 		log.Fatal(errors.Wrap(err, "failed to register runner"))
 	}
@@ -131,18 +136,30 @@ func tokenOrg(ctx context.Context, c *github.Client, org string) (*github.Regist
 	return token, nil
 }
 
-func execConfig(ctx context.Context, home, name, url, token string) error {
+func execUnregister(ctx context.Context, home, name, url, token string) error {
+	cmd := exec.CommandContext(ctx,
+		path.Join(home, "config.sh"),
+		[]string{
+			"remove",
+			"--name", name,
+			"--url", url,
+			"--token", token,
+		}...
+	)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
+}
+
+func execRegister(ctx context.Context, home, name, url, token string) error {
 	cmd := exec.CommandContext(ctx,
 		path.Join(home, "config.sh"),
 		[]string{
 			"--unattended",
 			"--replace",
-			"--name",
-			name,
-			"--url",
-			url,
-			"--token",
-			token,
+			"--name", name,
+			"--url", url,
+			"--token", token,
 		}...
 	)
 	cmd.Stdout = os.Stdout
